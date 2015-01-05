@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 import random
+from multiprocessing import Pool
 
 
 class Position():
@@ -72,10 +73,17 @@ class Position():
 class Field():
     def __init__(self, xsize, ysize):
         self.data = [[0 for x in range(xsize)] for x in range(ysize)]
-        self.data[0][3] = 1
-        self.data[1][3] = 1
-        self.data[2][3] = 1
-        self.data[3][3] = 1
+
+        # self.data[0][6] = 1
+        # self.data[1][6] = 1
+        # self.data[2][6] = 1
+        # self.data[3][6] = 1
+
+        # self.data[4][12] = 1
+        # self.data[3][12] = 1
+        # self.data[2][12] = 1
+        # self.data[1][12] = 1
+
         self.steps = []
         self.xsize = xsize
         self.ysize = ysize
@@ -177,25 +185,48 @@ class Field():
         data += "\n"
         return data
 
-xmax = 15
-ymax = 5
 
-best = None
+def calc_best(cid):
+    xmax = 20
+    ymax = 10
+    best = None
+    for i in range(20):
+        f = Field(xmax, ymax)
+        f.set_start(Position(0, 0))
+        f.set_end(Position(xmax - 1, ymax - 1))
 
-for i in range(500):
-    f = Field(xmax, ymax)
-    f.set_start(Position(0, 0))
-    f.set_end(Position(xmax - 1, ymax - 1))
+        while not f.done:
+            f.go_random_step()
 
-    while not f.done:
-        f.go_random_step()
+        if not best:
+            best = f
+        else:
+            if f.cost() < best.cost():
+                print("Child {:}: New {:} better than old {:}. {:} percent done".format(cid, f.cost(), best.cost(), 100 * i/200.0))
+                best = f.copy()
 
-    if not best:
-        best = f
-    else:
-        if f.cost() < best.cost():
-            print("new {:} better than old {:}".format(f.cost(), best.cost()))
-            best = f.copy()
+    print("Child {:}: DONE".format(cid))
+    return best
 
-print(best)
-print(best.steps)
+
+def main():
+    best = None
+    p = Pool(8)
+    try:
+        results = p.map(calc_best, range(8))
+    except KeyboardInterrupt:
+        p.terminate()
+        p.join()
+        return
+
+    for result in results:
+        if not best:
+            best = result.copy()
+        else:
+            if result.cost() < best.cost():
+                best = result.copy()
+
+    print(best)
+
+if __name__ == '__main__':
+    main()
