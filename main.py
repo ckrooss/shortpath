@@ -63,85 +63,92 @@ class Position():
             return True
         return False
 
+    @staticmethod
+    def random_valid():
+        val = random.choice([(0, 1), (0, -1), (1, 0), (-1, 0)])
+        return Position(val[0], val[1])
+
 
 class Field():
     def __init__(self, xsize, ysize):
         self.data = [[0 for x in range(xsize)] for x in range(ysize)]
+        self.data[0][3] = 1
+        self.data[1][3] = 1
+        self.data[2][3] = 1
+        self.data[3][3] = 1
         self.steps = []
         self.xsize = xsize
         self.ysize = ysize
         self.done = False
-        self.i = 0
+        self.path = []
+        self.steps = []
 
     def set_start(self, start):
         self.start = start
+        self.path.append(start)
+        self.pos = start.copy()
 
     def set_end(self, end):
         self.end = end
 
     def possible(self, pos):
+        if pos in self.path:
+            return False
+
         if not (Position(self.xsize, self.ysize) > pos >= Position(0, 0)):
             return False
 
-        x, path = self.calc_state()
-        if pos in path:
+        if self.data[pos.y][pos.x] == 1:
             return False
 
         return True
 
     def deadlock(self):
-        pos, path = self.calc_state()
+        if (self.possible(self.pos + Position(0, 1)) or
+                self.possible(self.pos + Position(0, -1)) or
+                self.possible(self.pos + Position(1, 0)) or
+                self.possible(self.pos + Position(-1, 0))):
+            return False
 
-        if (not self.possible(pos + Position(0, 1)) and
-                not self.possible(pos + Position(0, -1)) and
-                not self.possible(pos + Position(1, 0)) and
-                not self.possible(pos + Position(-1, 0))):
-            return True
-
-        return False
-
-    def calc_state(self):
-        self.path = [self.start]
-        pos = self.start.copy()
-        for step in self.steps:
-            pos += step
-            path.append(pos)
-
-        return pos, path
+        return True
 
     def go_step(self, step):
-        if (abs(step) <= 1):
-            pos, path = self.calc_state()
+        if self.pos == self.end:
+            self.done = True
+            return True
 
-            if pos == self.end:
-                self.done = True
-                return True
-
-            if Position(self.xsize, self.ysize) > (pos + step) >= Position(0, 0):
-                if (pos + step not in path):
+        new_pos = self.pos + step
+        if Position(self.xsize, self.ysize) > new_pos >= Position(0, 0):
+            if (new_pos not in self.path):
+                if self.data[new_pos.y][new_pos.x] != 1:
                     self.steps.append(step)
-                    self.i = 0
+                    self.pos += step
+                    self.path.append(self.pos)
                     return True
-        self.i += 1
         return False
 
     def go_random_step(self):
-        while not self.go_step(Position(random.randint(-1, 1), random.randint(-1, 1))):
+        while not self.go_step(Position.random_valid()):
             if self.deadlock():
                 self.restart()
 
-            #if self.i > 10:
-                #import pdb;pdb.set_trace()
-
     def restart(self):
         self.steps = []
+        self.path = [self.start]
+        self.pos = self.start.copy()
 
     def cost(self):
-        return len(self.steps)
+        cost = 0
+        for step in self.steps:
+            cost += abs(step)
+
+        return cost
 
     def copy(self):
         copy = Field(self.xsize, self.ysize)
         copy.steps = self.steps[:]
+        copy.path = self.path[:]
+        copy.pos = self.pos
         return copy
 
     def __str__(self):
@@ -149,32 +156,33 @@ class Field():
 
     def __repr__(self):
         data = ""
-        data += "-" * (len(self.data) + 2)
+        data += "-" * (self.xsize + 2)
         data += "\n"
         for y, row in enumerate(self.data):
             data += "|"
             for x, field in enumerate(row):
                 pos = Position(x, y)
-                cur, path = self.calc_state()
 
-                if pos == cur:
+                if pos == self.pos:
                     data += "X"
-                elif pos in path:
+                elif pos in self.path:
                     data += "."
+                elif field == 1:
+                    data += "="
                 else:
                     data += " "
             data += "|\n"
 
-        data += "-" * (len(self.data) + 2)
+        data += "-" * (self.xsize + 2)
         data += "\n"
         return data
 
-xmax = 5
+xmax = 15
 ymax = 5
 
 best = None
 
-for i in range(2000):
+for i in range(500):
     f = Field(xmax, ymax)
     f.set_start(Position(0, 0))
     f.set_end(Position(xmax - 1, ymax - 1))
@@ -189,4 +197,5 @@ for i in range(2000):
             print("new {:} better than old {:}".format(f.cost(), best.cost()))
             best = f.copy()
 
-print(f)
+print(best)
+print(best.steps)
