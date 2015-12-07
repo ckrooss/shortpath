@@ -16,6 +16,7 @@ class Position():
     This class represents a node in the A* algorithm
     Every position consists of a x- and y-value.
 
+
     Addition, comparison and copying methods are implemented
     """
     def __init__(self, x, y):
