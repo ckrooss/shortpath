@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from __future__ import print_function, unicode_literals
 from random import randint
 from shortpath.node import Node
 from shortpath.nodelist import Nodelist
