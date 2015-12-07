@@ -92,4 +92,3 @@ class AstarTests(unittest.TestCase):
 
     def test_Main(self):
         main()
-        self.fail()
