@@ -91,8 +91,5 @@ class AstarTests(unittest.TestCase):
         self.assertTrue(len(ob) > 0)
 
     def test_Main(self):
-        start_node = Node(5, 5)
-        end_node = Node(Node.xmax, Node.ymax)
-
-        main(start_node, end_node)
-
+        main()
+        self.fail()
