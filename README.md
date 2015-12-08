@@ -8,7 +8,8 @@ Probably one of the most inefficient implementations possible, using node object
 pip install -r requirements.txt
 
 # Usage
-    run ./main  
-OR  
+    python shortpath/astar.py
+OR
 
-    python -m shortpath  
+    python -m shortpath
+

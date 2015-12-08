@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from random import randint
-from shortpath.node import Node
-from shortpath.nodelist import Nodelist
+if __name__ == "__main__":
+    from node import Node
+    from nodelist import Nodelist
+else:
+    from .node import Node
+    from .nodelist import Nodelist
 
 Node.xmax = 30
 Node.ymax = 15

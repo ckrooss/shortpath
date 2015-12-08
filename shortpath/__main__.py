@@ -1,2 +1,3 @@
-from shortpath.astar import main
+from .astar import main
+
 main()
