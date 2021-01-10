@@ -3,11 +3,11 @@
 from termcolor import cprint
 
 
-class Node():
+class Node:
     xmax = None
     ymax = None
 
-    def __init__(self, x, y, f=0):
+    def __init__(self, x: int, y: int, f=0):
         assert Node.xmax, "need to define Node.xmax"
         assert Node.ymax, "need to define Node.ymax"
 
@@ -27,7 +27,7 @@ class Node():
         self.successors = []
 
     @staticmethod
-    def select_optimal_path(ziel, optimal_path):
+    def select_optimal_path(ziel, optimal_path) -> None:
         c = ziel
 
         while c:
@@ -35,7 +35,7 @@ class Node():
             c = c.pre
 
     @staticmethod
-    def printf(start, ziel, optimal_path, openlist, closedlist, obstacles):
+    def printf(start, ziel, optimal_path, openlist, closedlist, obstacles) -> None:
         print("\n ╔", end="")
         print("═" * (2 * Node.xmax + 1), sep="", end="")
         print("╗")
@@ -61,7 +61,7 @@ class Node():
         print("═" * (2 * Node.xmax + 1), sep="", end="")
         print("╝\n")
 
-    def valid_step(self, x_step, y_step, obstacles):
+    def valid_step(self, x_step: int, y_step: int, obstacles) -> int:
         if abs(x_step**2 + y_step**2) > 1:
             return False
 
@@ -82,7 +82,7 @@ class Node():
 
         return True
 
-    def expandNode(self, ziel, openlist, closedlist, obstacles):
+    def expand_node(self, ziel, openlist, closedlist, obstacles) -> None:
         for xstep in [-1, 0, 1]:
             for ystep in [-1, 0, 1]:
                 if self.valid_step(xstep, ystep, obstacles):
@@ -115,7 +115,7 @@ class Node():
             openlist.append(successor)
 
     @staticmethod
-    def dist(a, b):
+    def dist(a, b) -> int:
         return (b.y - a.y) ** 2 + (b.x - a.x) ** 2
 
     def __eq__(self, other):

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 
-class Nodelist():
+class Nodelist(object):
 
     def __init__(self, *args):
         self.stor = dict()
@@ -27,7 +28,7 @@ class Nodelist():
         self.stor[(o.x, o.y)] = o
 
     def __iter__(self):
-        return self.stor
+        return self.stor.__iter__()
 
     def __len__(self):
         return len(self.stor)

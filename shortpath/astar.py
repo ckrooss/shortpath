@@ -12,7 +12,7 @@ Node.xmax = 30
 Node.ymax = 15
 
 
-def gen_obstacles(xmax, ymax):
+def gen_obstacles(xmax: int, ymax: int) -> Nodelist:
     obstacles = Nodelist()
 
     def ao(x, y):
@@ -34,17 +34,17 @@ def gen_obstacles(xmax, ymax):
     return obstacles
 
 
-def find_path(ziel, openlist, closedlist, obstacles):
+def find_path(ziel: Node, openlist: Nodelist, closedlist: Nodelist, obstacles: Nodelist) -> bool:
     while openlist:
-        currentNode = openlist.pop_min()
+        current_node = openlist.pop_min()
 
-        if currentNode == ziel:
-            ziel.pre = currentNode
+        if current_node == ziel:
+            ziel.pre = current_node
             return True
 
-        closedlist.append(currentNode)
+        closedlist.append(current_node)
 
-        currentNode.expandNode(ziel, openlist, closedlist, obstacles)
+        current_node.expand_node(ziel, openlist, closedlist, obstacles)
 
     return False
 
